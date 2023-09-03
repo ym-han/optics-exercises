@@ -25,6 +25,7 @@ library
   exposed-modules:
       Chp2
       Chp6
+      FoldsFiltering
   other-modules:
       Paths_optics_exercises
   hs-source-dirs:
