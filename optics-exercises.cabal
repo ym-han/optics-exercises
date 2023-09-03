@@ -24,7 +24,7 @@ source-repository head
 library
   exposed-modules:
       Chp2
-      Chp4
+      Chp6
   other-modules:
       Paths_optics_exercises
   hs-source-dirs:
