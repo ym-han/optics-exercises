@@ -25,6 +25,7 @@ library
   exposed-modules:
       Chp2
       Chp6
+      Chp7traversals
       FoldsFiltering
   other-modules:
       Paths_optics_exercises
