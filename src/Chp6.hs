@@ -121,6 +121,8 @@ tcs ^.. folded
 >>> [(1, (2, 3)), (4, (5, 6))] ^.. folded . folding (\tup -> tup ^.. _1 <> (tup ^.. _2 . both ))
 [1,2,3,4,5,6]
 
+--- NOTE: The cleaner way to do this, from the answers: use (\(a, (b, c)) -> [a, b, c])
+
 -- instructive: note, again, the monoidal mappending with the final folded
 >>> [(Just 1, Left "one"), (Nothing, Right 2)] ^.. folded . folded 
 [Left "one",Right 2]
@@ -143,6 +145,7 @@ tcs ^.. folded
 >>> [(Just 1, Left "one"), (Nothing, Right 2)] ^.. folded . folding (\tup -> tup ^.. _1 . folded <> tup ^.. _2 . folded)
 [1,2]
 
+----- NOTE: the nicer way from the answers: use as fn (\(a, b) -> a ^.. folded <> b ^.. folded)
 
 >>> [(1, "one"), (2, "two")] ^.. folded . folding (\tup -> tup ^.. _1 . to Left)
 [Left 1,Left 2]
