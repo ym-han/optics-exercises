@@ -21,6 +21,8 @@ import Data.Ord (comparing)
 import Data.Maybe
 import Data.Char (isAlpha)
 
+import Control.Monad.State
+
 
 -- ([(1, 2), (3, 4)], [5,6,7]) ^.. beside (folded . both) folded
 {-
@@ -64,7 +66,54 @@ a. Fill in the blanks
 >>> sequenceAOf _1 (Nothing, "Rosebud")
 Nothing
 
+-- tough:
+sequenceAOf (traversed . _1) _ 
 
+
+
+>>> sequenceAOf traversed [ZipList [1, 2], ZipList [3, 4]]
+ZipList {getZipList = [[1,3],[2,4]]}
+
+>>> sequenceAOf (traversed . _2) [('a', ZipList [1, 2]), ('b', ZipList [3, 4])]
+ZipList {getZipList = [[('a',1),('b',3)],[('a',2),('b',4)]]}
+
+>>> :t [('a', ZipList [1, 2]), ('b', ZipList [3, 4])]
+[('a', ZipList [1, 2]), ('b', ZipList [3, 4])] :: Num a => [(Char, ZipList a)]
+
+Note to self: The intuition i'm getting from CP's text re sequenceAOf is this. 
+    sequenceAOf :: Traversal s t (f a) a -> s -> f t
+
+    The thing to pay attention to is the type of what's focused by the traversal -- i.e., the `f a`.
+    What sequenceAOf does, as CP says, is to pull that `f` to the outside of the resulting structure we get back.
+
+
+State and traverseOf: useful!
+>>> let result = traverseOf (beside traversed both) (\n -> modify (+n) >> get) ([1, 1, 1], (1, 1))
+>>> runState result 0
+(([1,2,3],(4,5)),5)
+
+>>> :t result
+result :: (Num b, MonadState b f) => f ([b], (b, b))
+>>> :t (\n -> modify (+n) >> get) 
+(\n -> modify (+n) >> get) :: (Num b, MonadState b m) => b -> m b
+
+2. Rewrite the following using the infix-operator for traverseOf
+
+traverseOf
+    (_1 . traversed)
+    (\c -> [toLower c, toUpper c]) 
+    ("ab", True)
+
+>>> ("ab", True) & (_1 . traversed) %%~ (\c -> [toLower c, toUpper c]) 
+[("ab",True),("aB",True),("Ab",True),("AB",True)]
+
+traverseOf
+    (traversed . _1)
+    (\c -> [toLower c, toUpper c])
+    [('a', True), ('b', False)]
+
+>>> [('a', True), ('b', False)] & (traversed . _1) %%~ (\c -> [toLower c, toUpper c])
+[[('a',True),('b',False)],[('a',True),('B',False)],[('A',True),('b',False)],[('A',True),('B',False)]]
 
 
 -}
