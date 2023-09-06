@@ -58,7 +58,7 @@ import Control.Monad.State
 >>> ((True, "Strawberries"), (False, "Blueberries"), (True, "Blackberries")) & each %~ snd
 ("Strawberries","Blueberries","Blackberries")
 
-
+7.4
 2. Exercises - Traversal Actions
 
 a. Fill in the blanks
@@ -115,5 +115,44 @@ traverseOf
 >>> [('a', True), ('b', False)] & (traversed . _1) %%~ (\c -> [toLower c, toUpper c])
 [[('a',True),('b',False)],[('a',True),('B',False)],[('A',True),('b',False)],[('A',True),('B',False)]]
 
+7.7 Exercises - partsOf
+
+-- Viewing
+>>> [1, 2, 3, 4] ^. partsOf (traversed . filtered even)
+[2,4]
+
+
+>>> ["Aardvark", "Bandicoot", "Capybara"] ^. traversed . partsOf (taking 3 traversed)
+"AarBanCap"
+
+>>> ["Aardvark", "Bandicoot", "Capybara"] ^.. traversed . (taking 3 traversed)
+"AarBanCap"
+
+>>> ["Aardvark", "Bandicoot", "Capybara"] ^.. traversed . traversed
+"AardvarkBandicootCapybara"
+
+>>> ([1, 2], M.fromList [('a', 3), ('b', 4)]) ^. partsOf (beside traversed traversed)
+[1,2,3,4]
+
+-- Setting
+>>> [1, 2, 3, 4] & partsOf (traversed . filtered even) .~ [20, 40]
+[1,20,3,40]
+
+>>> ["Aardvark", "Bandicoot", "Capybara"] & partsOf (taking 1 traversed . traversed) .~ "Kangaroo"
+["Kangaroo","Bandicoot","Capybara"]
+
+***
+>>> ["Aardvark", "Bandicoot", "Capybara"] & partsOf (traversed . traversed) .~ "Ant"
+["Antdvark","Bandicoot","Capybara"]
+
+-- Modifying
+-- Tip: Map values are traversed in order by KEY
+
+-- hack
+>>> M.fromList [('a', 'a'), ('b', 'b'), ('c', 'c')] & partsOf traversed %~ \s -> "bca"
+fromList [('a','b'),('b','c'),('c','a')]
+
+>>> ('a', 'b', 'c') & partsOf each %~ reverse
+('c','b','a')
 
 -}
