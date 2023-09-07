@@ -155,4 +155,18 @@ fromList [('a','b'),('b','c'),('c','a')]
 >>> ('a', 'b', 'c') & partsOf each %~ reverse
 ('c','b','a')
 
+
+-- Bonus
+>>> [1, 2, 3, 4, 5, 6] & partsOf (taking 3 traversed) %~ reverse
+[3,2,1,4,5,6]
+
+>>> ('a', 'b', 'c') ^. partsOf each 
+"abc"
+
+>>> (\xs -> fmap ((,) xs) xs) "abc"
+[("abc",'a'),("abc",'b'),("abc",'c')]
+
+>>> ('a', 'b', 'c') & unsafePartsOf each %~ \xs -> fmap ((,) xs) xs
+(("abc",'a'),("abc",'b'),("abc",'c'))
+
 -}
